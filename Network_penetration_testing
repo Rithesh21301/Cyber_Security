@@ -1,0 +1,100 @@
+Tester: Rithesh
+
+Gmail: rithesh21301@gmail.com
+
+Network Scan Report
+
+Introduction:
+This report provides a simplified explanation of the network scanning commands used, their results, and the security findings.
+The goal is to help a non-technical person understand what was done and what it means.
+
+1. Commands Used and Their Purpose
+    Command:
+      nmap -sn 192.168.0.0/24
+      This is a host discovery (ping scan) command that checks which devices are active on the network.
+      It scans the entire subnet (192.168.0.0 to 192.168.0.255) but does not check for open ports.
+      The -sn option tells Nmap not to perform a port scan—only to detect live hosts.
+
+    Purpose:
+      This command scans the entire network (192.168.0.0 to 192.168.0.255) to find active devices. 
+      It does not check for open ports but simply lists the devices connected to the network.
+    
+    Result:
+      Found active devices on the network, meaning some computers or devices responded.
+      Identified IP addresses assigned to various devices.
+      Detailed Port Scan
+
+
+    Command:
+      nmap -p- 192.168.0.136
+      This command performs a full port scan on the target device 192.168.0.136.
+      The -p- option tells Nmap to scan all 65,535 ports (from 0 to 65535) instead of just the default 1,000 ports.
+
+      Purpose: This command scans all possible ports (0-65535) on a specific device (192.168.0.136) to check which ones are open and might be used for communication.
+
+    Result:
+      Identified open ports, which could indicate services running on the device.
+      Some ports might be vulnerable if they are improperly secured.
+
+    Vulnerability Scan (Service Detection)
+    Command:
+      nmap -sV --script=vuln 192.168.0.136
+      This command performs service version detection and vulnerability scanning on the target 192.168.0.136.
+      It helps identify which services are running and checks for known vulnerabilities
+      
+      Purpose: This command detects which services are running on the open ports and checks for known vulnerabilities.
+
+    Result:
+      Found specific services running on open ports.
+      Checked for common vulnerabilities in these services.
+      If any vulnerable service is detected, it means it could be exploited by attackers.
+      NetBIOS and SMB Enumeration
+
+
+    Command:
+      nmap -p 137,138,139,445 --script=smb-os-discovery,smb-enum-shares,smb-enum-users 192.168.0.136
+      This command scans NetBIOS (137-139) and SMB (445) ports to gather information about file-sharing services and the operating system of the target (192.168.0.136).
+      It checks for shared folders, user accounts, and OS details
+
+      Purpose: This scans NetBIOS and SMB-related ports to enumerate shared resources and user accounts.
+
+      Result:
+        Identified shared folders and services running on SMB.
+        Enumerated user accounts if permissions allowed.
+        Checked for potential misconfigurations or vulnerabilities in file-sharing settings.
+      Live Packet Capture
+
+      command:
+        sudo tcpdump -i eth0 host 192.168.0.136 -vv
+        sudo → Runs the command with root privileges (required for packet capture).
+        tcpdump → The command-line tool for network packet analysis.
+        -i eth0 → Captures traffic on interface eth0 (main network adapter).
+        host 192.168.0.136 → Filters packets only for this specific IP.
+        -vv → Increases verbosity, displaying detailed packet information.
+
+        Purpose: This captures and displays live network traffic between the scanning machine and the target device (192.168.0.136) to analyze communication.
+
+      Result:
+        Displayed multiple UDP packets related to mDNS (Multicast DNS) and NetBIOS name service.
+        Showed requests and responses within the local network.
+        No critical vulnerabilities detected in captured packets.
+
+2. Summary of Findings
+        Active Devices               : The network scan found multiple active devices.
+        Open Ports on 192.168.0.136  : The scan revealed several open ports, which could indicate running services.
+        Services Identified          : The vulnerability scan detected the types of services running.
+        NetBIOS and SMB Exposure     : Found shared folders and user accounts that might require further security assessment.
+        Potential Vulnerabilities    : No critical vulnerabilities were found in the packet capture, but open ports should always be secured.
+
+3. Recommendations
+        Close Unused Ports       : Any unnecessary open ports should be closed to prevent unauthorized access.
+        Update Software          : Ensure all detected services are up-to-date to prevent exploitation of known vulnerabilities.
+        Restrict SMB and NetBIOS : Limit access to SMB and NetBIOS services, especially for publicly accessible networks.
+        Use Firewalls            : A firewall can help control which connections are allowed.
+        Monitor Traffi c         : Regularly checking network traffic can help detect suspicious activity early.
+
+Conclusion: 
+        This scan provided valuable insights into the network security status. 
+        While no immediate threats were found, securing open ports, restricting unnecessary file-sharing services, 
+        and monitoring the network continuously is recommended to prevent potential attacks.
+
